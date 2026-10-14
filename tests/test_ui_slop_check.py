@@ -109,9 +109,45 @@ class Fonts(unittest.TestCase):
         self.assertIn("`@fontsource-variable/geist`", text)
         self.assertIn("`Plus Jakarta Sans`", text)
 
+    def test_seeded_second_wave_fonts(self):
+        content = (
+            '<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1">\n'
+            '<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,700&f[]=clash-display@600">\n'
+            '@import "@fontsource/fraunces";\n'
+        )
+        text = context_of(run_hook(write("/project/index.html", content)))
+        self.assertIn("`Instrument Serif`", text)
+        self.assertIn("`satoshi`", text)
+        self.assertIn("`clash-display`", text)
+        self.assertIn("`@fontsource/fraunces`", text)
+
     def test_word_inter_outside_font_context_is_ignored(self):
         content = "const interval = 3; // Inter-process timer"
         self.assertIsNone(context_of(run_hook(write("/project/timer.ts", content))))
+
+
+class Svg(unittest.TestCase):
+    def test_logo_svg_flags_navy_fill_and_live_text_font(self):
+        content = (
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">\n'
+            '<rect width="256" height="256" rx="48" fill="#0F172A"/>\n'
+            '<text x="128" y="160" font-family="Inter" fill="#fff">A</text>\n'
+            "</svg>"
+        )
+        text = context_of(run_hook(write("/project/brand/logo.svg", content)))
+        self.assertIn("brand/logo.svg", text)
+        self.assertIn("L2 `#0F172A`: navy / blue-slate", text)
+        self.assertIn("L3 `Inter`: overused default font", text)
+
+    def test_clean_svg_mark_is_silent(self):
+        content = (
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img">\n'
+            "<title>Mark</title>\n"
+            '<path fill="#2E3B1F" fill-rule="evenodd" d="M32 32h192v192H32zM96 96v64h64V96z"/>\n'
+            '<path fill="#B5562A" d="M120 120h16v16h-16z"/>\n'
+            "</svg>"
+        )
+        self.assertIsNone(context_of(run_hook(write("/project/brand/mark.svg", content))))
 
 
 class Silence(unittest.TestCase):

@@ -1,10 +1,11 @@
 """PostToolUse hook: warn when Claude writes "AI slop" UI defaults.
 
 Reads the hook JSON on stdin and checks only the text Claude just wrote (Write
-content or Edit new_string) in UI files: navy and blue-slate colours, blue-tinted
-grey pages, Tailwind slate/gray/indigo defaults, purple gradients, gradient text
-and overused font families. Findings go back to Claude as additionalContext; the
-hook never blocks. Rationale lives in ~/.claude/rules/ui-anti-slop.md.
+content or Edit new_string) in UI files, SVG logos and icons included: navy and
+blue-slate colours, blue-tinted grey pages, Tailwind slate/gray/indigo defaults,
+purple gradients, gradient text and overused font families. Findings go back to
+Claude as additionalContext; the hook never blocks. Rationale lives in
+~/.claude/rules/ui-anti-slop.md.
 
 Opt out per project with "env": {"UI_SLOP_CHECK": "off"} in .claude/settings.json.
 Must stay compatible with /usr/bin/python3 (3.9) and use the stdlib only.
@@ -19,7 +20,7 @@ import sys
 
 UI_EXTS = {
     ".css", ".scss", ".sass", ".less", ".html", ".htm", ".jsx", ".tsx", ".js", ".ts",
-    ".mjs", ".cjs", ".vue", ".svelte", ".astro", ".mdx",
+    ".mjs", ".cjs", ".vue", ".svelte", ".astro", ".mdx", ".svg",
 }
 SKIP_PARTS = ("/node_modules/", "/dist/", "/build/", "/.next/", "/.git/")
 SKIP_SUFFIXES = ("schema.d.ts", ".min.css", ".min.js")
@@ -62,12 +63,15 @@ CLASS_RULES = [
 ]
 FONT_NAMES_RE = re.compile(
     r"\b(Inter|Geist|Poppins|Roboto|Montserrat|Space Grotesk|Plus Jakarta Sans|DM Sans"
-    r"|Outfit|Manrope|Sora)\b"
+    r"|Outfit|Manrope|Sora|Instrument Serif|Fraunces|Satoshi|Clash Display"
+    r"|Cabinet Grotesk)\b"
 )
 FONTSOURCE_RE = re.compile(
     r"@fontsource(?:-variable)?/(inter|geist|poppins|roboto|montserrat|space-grotesk"
-    r"|plus-jakarta-sans|dm-sans|outfit|manrope|sora)\b"
+    r"|plus-jakarta-sans|dm-sans|outfit|manrope|sora|instrument-serif|fraunces)\b"
 )
+# Fontshare CSS URLs name families by lowercase slug: api.fontshare.com/v2/css?f[]=satoshi@400
+FONTSHARE_RE = re.compile(r"f\[\]=(satoshi|clash-display|cabinet-grotesk)\b")
 FONT_CONTEXT_RE = re.compile(r"font|next/font|fonts\.googleapis|fonts\.bunny", re.I)
 
 
@@ -148,6 +152,9 @@ def other_hits(line):
         yield "bg-clip-text text-transparent", "gradient text"
     for m in FONTSOURCE_RE.finditer(line):
         yield m.group(0), "overused default font"
+    if "fontshare" in line:
+        for m in FONTSHARE_RE.finditer(line):
+            yield m.group(1), "overused default font"
     if FONT_CONTEXT_RE.search(line):
         for m in FONT_NAMES_RE.finditer(line.replace("+", " ")):
             yield m.group(0), "overused default font"
