@@ -1,10 +1,10 @@
 # UI: no AI-slop defaults
 
-Applies whenever I design or style any interface: apps, landing pages, dashboards, components,
-HTML artifacts, slides, diagrams, emails. The brief's own words win, and so does a project's
-established design system: if either asks for something listed here, use it. These rules govern
-every axis the brief leaves free. In an existing codebase, don't add these defaults to new work;
-point out the ones already there instead of silently rewriting them.
+Applies whenever I design or style any interface or brand asset: apps, landing pages, dashboards,
+components, HTML artifacts, slides, diagrams, emails, logos, icons. The brief's own words win, and
+so does a project's established design system: if either asks for something listed here, use it.
+These rules govern every axis the brief leaves free. In an existing codebase, don't add these
+defaults to new work; point out the ones already there instead of silently rewriting them.
 
 ## Never: navy
 Navy and blue-slate are banned as page, surface, sidebar, card, hero or "dark mode" colours.
@@ -34,9 +34,13 @@ not toward blue; WCAG AA contrast for text.
 - Don't default to Inter, Geist, Roboto, Arial, Open Sans, Lato, Poppins, Montserrat or the
   system-ui stack, nor to the "distinctive" repeat picks: Space Grotesk, Plus Jakarta Sans,
   DM Sans, Outfit, Manrope, Sora, Playfair Display + Inter.
+- Nor the second wave that prompting guides seeded: Instrument Serif, Fraunces, Bricolage
+  Grotesque, Newsreader, Crimson Pro, IBM Plex, Satoshi, General Sans, Clash Display, Cabinet
+  Grotesk, Switzer, Söhne.
 - Tells: gradient-text headlines; one word in a headline set italic or in the accent colour; a
   tracked ALL-CAPS eyebrow above every heading; tracking-tight bold on every heading; Title Case
-  Everywhere; a giant centred hero headline by default.
+  Everywhere; a giant centred hero headline by default; serif display + grotesk body + mono labels;
+  mono on text that isn't code; variable axes maxed out for effect.
 Instead: one family or two clearly distinct ones chosen for this subject, a real type scale,
 deliberate weights and widths, lines under ~80 characters.
 
@@ -50,11 +54,26 @@ deliberate weights and widths, lines under ~80 characters.
   sparkle emoji, emoji as icons.
 - Template chrome: 01/02/03 markers on things that aren't a sequence, "A · B · C" meta strings,
   "→" on every link, monospace micro-labels.
+- Surfaces: pure-black or grey shadows on a coloured ground, the same radius on a parent and its
+  child, border + fill + shadow on one card, `outline: none` with nothing in its place.
 - Motion: fade-and-slide-up on every section, hover:scale on every card, pulsing dots,
   transition-all.
 Instead: open with the most characteristic thing of the subject (its photo, its product, a live
 demo, its real data). Asymmetric or left-aligned grids; radius and shadow that vary by role; one
 memorable element and everything else quiet.
+
+## Logos and assets
+- Logos are hand-written SVG paths drawn from a one-sentence concept in the subject, and work in
+  one colour at 16 px. Never: the AI ring (gradient circle, central opening, radiating parts), the
+  swirling hexagon or vortex, radiating dots or orbits, overlapping circles, the ✨ sparkle, a
+  robot face with dot eyes, an infinity loop, a letter in a rounded square, swoosh/globe/rising
+  bars, a gradient carrying a weak form, live `<text>`.
+- Icons: a stock 24px/2px round-cap set (Lucide, Heroicons, Feather) used as shipped for
+  everything, two sets mixed, an icon in a circle above every heading.
+- Illustration and photos: Corporate Memphis figures, one-accent unDraw-style scenes, glossy/clay/
+  glass 3D, isometric workspaces, decorative stock or AI-generated photos.
+Instead: show the real product, place, people or data; draw icons and illustration from the logo's
+geometry and the palette.
 
 ## Copy
 Unlock, Elevate, Empower, Seamless, Supercharge, Revolutionize, "all-in-one platform", "the future
@@ -63,8 +82,10 @@ of X", "feels like magic", invented round stats (10,000+, 99.9 %), John Doe/Acme
 "Revolusi …", "Wujudkan …". Use real content; a button says what happens.
 
 ## Process
-1. Before writing UI code, state the palette (named hex tokens), type and layout, each with the
-   reason it fits this subject, and check none of it is on this page. Load `frontend-design`.
+1. Before writing UI code, state the Direction (subject, three "X, not Y" adjectives, material
+   nouns), palette (named hex tokens), type, logo concept, assets, layout and surfaces, each with
+   the reason it fits this subject, and check none of it is on this page. Load the `ui-anti-slop`
+   skill for the full process, and `frontend-design`.
 2. After building, screenshot it and ask: would this look the same for a different product? If
    yes, change it.
 3. A "UI slop check" note from the PostToolUse hook means fix it, or say why the brief or the

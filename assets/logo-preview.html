@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo preview</title>
+<!--
+  Logo preview sheet for the ui-anti-slop skill (see references/logo-svg.md).
+  1. Set the four project tokens below to the palette's hex values.
+  2. Paste the master mark's svg element into the template with id "mark", and optionally the
+     horizontal lockup into the template with id "lockup" (both near the end of the body). Use
+     literal hex fills or currentColor, not CSS vars. This comment deliberately doesn't spell
+     out those tags, so a find-and-replace on them hits the real templates.
+  3. Open the file and screenshot it. Lint results are also logged to the console as
+     "[logo-lint]" JSON.
+  Works offline over file://; no external requests.
+-->
+<style>
+  :root {
+    /* Project tokens: replace with the palette's values. */
+    --ground: #F2F2F2;
+    --ink: #1C1C1C;
+    --brand: #6B6B6B;
+    --accent: #9A9A9A;
+
+    /* Sheet chrome: neutral, zero hue, so it doesn't colour the judgement. */
+    --sheet-bg: #E6E6E6;
+    --sheet-panel: #F7F7F7;
+    --sheet-ink: #1A1A1A;
+    --sheet-muted: #5E5E5E;
+    --sheet-rule: #CFCFCF;
+    --pass: #3F6B2F;
+    --warn: #8A6410;
+    --fail: #A3321F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 48px;
+    background: var(--sheet-bg);
+    color: var(--sheet-ink);
+    font: 14px/1.45 "Avenir Next", Avenir, "Gill Sans", "Trebuchet MS", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  main { max-width: 1120px; margin: 0 auto; }
+  header { margin-bottom: 20px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--sheet-muted); max-width: 70ch; }
+  section {
+    background: var(--sheet-panel);
+    border: 1px solid var(--sheet-rule);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  h2 { font-size: 15px; font-weight: 600; margin: 0 0 2px; }
+  .note { margin: 0 0 12px; color: var(--sheet-muted); font-size: 13px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  figcaption { font-size: 12px; color: var(--sheet-muted); }
+  .tile {
+    display: grid;
+    place-items: center;
+    background: var(--ground);
+    color: var(--ink);
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .tile svg { display: block; }
+  .on-ink { background: var(--ink); color: var(--ground); }
+  .on-brand { background: var(--brand); color: var(--ground); }
+  canvas.pixel { image-rendering: pixelated; width: 128px; height: 128px; display: block; }
+  .grid-wrap { position: relative; width: 256px; height: 256px; }
+  .grid-wrap > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .nav {
+    display: flex; align-items: center; gap: 24px;
+    width: min(560px, 100%); height: 56px; padding: 0 16px;
+    background: var(--ground); color: var(--ink); border-radius: 4px;
+  }
+  .nav .bar { height: 8px; width: 48px; border-radius: 2px; background: currentColor; opacity: .25; }
+  .nav .spacer { flex: 1; }
+  .tabs {
+    display: flex; align-items: flex-end; height: 40px; padding: 0 8px;
+    width: min(360px, 100%); background: #D4D4D4; border-radius: 4px 4px 0 0;
+  }
+  .tabs.dark { background: #2B2B2B; }
+  .tab {
+    display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;
+    width: 220px; border-radius: 8px 8px 0 0; background: #FAFAFA; color: #1A1A1A;
+    font-size: 12px; white-space: nowrap; overflow: hidden;
+  }
+  .tabs.dark .tab { background: #3A3A3A; color: #EDEDED; }
+  .tab svg { flex: none; }
+  .empty { color: var(--sheet-muted); font-size: 13px; font-style: italic; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td { padding: 6px 8px; border-top: 1px solid var(--sheet-rule); vertical-align: top; }
+  td:first-child { width: 4.5em; font-weight: 600; }
+  .s-pass { color: var(--pass); }
+  .s-warn { color: var(--warn); }
+  .s-fail { color: var(--fail); }
+  code { font-family: Menlo, Consolas, monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Logo preview</h1>
+    <p>Paste the master into <code>&lt;template id="mark"&gt;</code>, the lockup into
+      <code>&lt;template id="lockup"&gt;</code>, and set the four project tokens at the top of
+      the file. The grey square below is a placeholder.</p>
+  </header>
+
+  <section>
+    <h2>Lint</h2>
+    <p class="note">Checks the markup of the master and lockup against the SVG rules in
+      references/logo-svg.md.</p>
+    <table id="lint"></table>
+  </section>
+
+  <section>
+    <h2>Sizes</h2>
+    <p class="note">Full colour on the ground token, 16 to 256 px.</p>
+    <div class="row" id="sizes"></div>
+  </section>
+
+  <section>
+    <h2>Pixel truth</h2>
+    <p class="note">What a browser actually rasterises at 16 and 32 px, enlarged. If the idea is
+      gone here, the favicon needs its own simplified drawing.</p>
+    <div class="row" id="pixels"></div>
+  </section>
+
+  <section>
+    <h2>Colourways</h2>
+    <p class="note">Full colour, one colour (every fill forced to currentColor), reversed, and on
+      the brand colour.</p>
+    <div class="row" id="colourways"></div>
+  </section>
+
+  <section>
+    <h2>Stress tests</h2>
+    <p class="note">Mirrored and rotated 180° to catch unintended readings; blurred to judge the
+      silhouette.</p>
+    <div class="row" id="stress"></div>
+  </section>
+
+  <section>
+    <h2>Grid</h2>
+    <p class="note">Lines every 1/16 and 1/4 of the viewBox. The dashed box is the drawn geometry's
+      bounding box: check the optical centre against it.</p>
+    <div class="row" id="grid"></div>
+  </section>
+
+  <section>
+    <h2>Lockup</h2>
+    <p class="note">The horizontal lockup at 32, 64 and 128 px high in full colour, and reversed in
+      one colour.</p>
+    <div class="row" id="lockups"></div>
+  </section>
+
+  <section>
+    <h2>In context</h2>
+    <p class="note">The lockup in a nav bar, and the mark as a favicon in light and dark browser
+      tabs.</p>
+    <div class="row" id="context"></div>
+  </section>
+</main>
+
+<template id="mark">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="t">
+    <title id="t">Placeholder</title>
+    <path fill="#6B6B6B" fill-rule="evenodd" d="M48 48H208V208H48Z M112 112V144H144V112Z"/>
+  </svg>
+</template>
+
+<template id="lockup"></template>
+
+<script>
+(function () {
+  "use strict";
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var rootStyle = getComputedStyle(document.documentElement);
+  function token(name) { return rootStyle.getPropertyValue(name).trim(); }
+
+  function fromTemplate(id) {
+    var tpl = document.getElementById(id);
+    var svg = tpl && tpl.content.querySelector("svg");
+    return svg ? { svg: svg, markup: tpl.innerHTML.trim() } : null;
+  }
+
+  function viewBox(svg) {
+    var raw = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(Number);
+    return raw.length === 4 && raw.every(isFinite) ? raw : null;
+  }
+
+  // A sized, decorative copy of the SVG. `height` in px; width follows the viewBox ratio.
+  function sized(svg, height, opts) {
+    opts = opts || {};
+    var copy = svg.cloneNode(true);
+    var vb = viewBox(copy) || [0, 0, 1, 1];
+    copy.setAttribute("height", height);
+    copy.setAttribute("width", Math.round(height * vb[2] / vb[3]));
+    // Copies on the sheet are pictures of the logo: hide them from assistive tech and drop
+    // the title so its id isn't duplicated.
+    copy.removeAttribute("id");
+    copy.removeAttribute("role");
+    copy.removeAttribute("aria-labelledby");
+    copy.setAttribute("aria-hidden", "true");
+    var title = copy.querySelector("title");
+    if (title) title.remove();
+    if (opts.oneColour) forceCurrentColor(copy);
+    if (opts.transform) copy.style.transform = opts.transform;
+    if (opts.filter) copy.style.filter = opts.filter;
+    return copy;
+  }
+
+  function forceCurrentColor(node) {
+    node.querySelectorAll("*").forEach(function (el) {
+      ["fill", "stroke"].forEach(function (prop) {
+        var value = el.getAttribute(prop);
+        if (value && value !== "none") el.setAttribute(prop, "currentColor");
+        if (el.style && el.style[prop] && el.style[prop] !== "none") el.style[prop] = "currentColor";
+      });
+      var stop = el.localName === "stop";
+      if (stop) el.setAttribute("stop-color", "currentColor");
+    });
+    if (!node.getAttribute("fill")) node.setAttribute("fill", "currentColor");
+  }
+
+  function figure(content, caption, tileClass) {
+    var fig = document.createElement("figure");
+    var tile = document.createElement("div");
+    tile.className = "tile" + (tileClass ? " " + tileClass : "");
+    tile.appendChild(content);
+    var cap = document.createElement("figcaption");
+    cap.textContent = caption;
+    fig.appendChild(tile);
+    fig.appendChild(cap);
+    return fig;
+  }
+
+  function empty(text) {
+    var p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = text;
+    return p;
+  }
+
+  // Rasterise the SVG at `px` on a solid background, like a favicon would be.
+  function pixelCanvas(svg, px, background, colour, oneColour) {
+    var canvas = document.createElement("canvas");
+    canvas.width = px;
+    canvas.height = px;
+    canvas.className = "pixel";
+    var copy = sized(svg, 256, { oneColour: oneColour });
+    copy.setAttribute("width", 256);
+    copy.style.color = colour;
+    var blob = new Blob([new XMLSerializer().serializeToString(copy)], { type: "image/svg+xml" });
+    var url = URL.createObjectURL(blob);
+    var img = new Image();
+    img.onload = function () {
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = background;
+      ctx.fillRect(0, 0, px, px);
+      ctx.drawImage(img, 0, 0, px, px);
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+    return canvas;
+  }
+
+  function gridOverlay(svg, size) {
+    var wrap = document.createElement("div");
+    wrap.className = "grid-wrap tile";
+    wrap.style.padding = "0";
+    var art = sized(svg, size);
+    wrap.appendChild(art);
+    var vb = viewBox(svg);
+    if (!vb) return wrap;
+    var overlay = document.createElementNS(SVG_NS, "svg");
+    overlay.setAttribute("viewBox", vb.join(" "));
+    overlay.setAttribute("aria-hidden", "true");
+    var unit = vb[2] / 16;
+    for (var i = 0; i <= 16; i++) {
+      var major = i % 4 === 0;
+      [["x1", "x2", "y1", "y2"], ["y1", "y2", "x1", "x2"]].forEach(function (axes) {
+        var line = document.createElementNS(SVG_NS, "line");
+        var at = (axes[0] === "x1" ? vb[0] : vb[1]) + i * unit;
+        line.setAttribute(axes[0], at);
+        line.setAttribute(axes[1], at);
+        line.setAttribute(axes[2], axes[2] === "y1" ? vb[1] : vb[0]);
+        line.setAttribute(axes[3], axes[3] === "y2" ? vb[1] + vb[3] : vb[0] + vb[2]);
+        line.setAttribute("stroke", "rgb(26 26 26 / " + (major ? ".28" : ".1") + ")");
+        line.setAttribute("stroke-width", vb[2] / size);
+        overlay.appendChild(line);
+      });
+    }
+    wrap.appendChild(overlay);
+    // Bounding box of the drawn geometry, once it's in the document.
+    requestAnimationFrame(function () {
+      try {
+        var box = art.getBBox();
+        var rect = document.createElementNS(SVG_NS, "rect");
+        rect.setAttribute("x", box.x);
+        rect.setAttribute("y", box.y);
+        rect.setAttribute("width", box.width);
+        rect.setAttribute("height", box.height);
+        rect.setAttribute("fill", "none");
+        rect.setAttribute("stroke", token("--fail"));
+        rect.setAttribute("stroke-width", (vb[2] / size) * 1.5);
+        rect.setAttribute("stroke-dasharray", (vb[2] / size) * 6);
+        overlay.appendChild(rect);
+      } catch (e) { /* getBBox can fail on an empty mark */ }
+    });
+    return wrap;
+  }
+
+  function tabStrip(svg, dark, label) {
+    var strip = document.createElement("div");
+    strip.className = "tabs" + (dark ? " dark" : "");
+    var tab = document.createElement("div");
+    tab.className = "tab";
+    var icon = sized(svg, 16);
+    tab.appendChild(icon);
+    tab.appendChild(document.createTextNode(label));
+    strip.appendChild(tab);
+    return strip;
+  }
+
+  // ---- Lint ------------------------------------------------------------------------------
+
+  var ARITY = { m: 2, l: 2, h: 1, v: 1, c: 6, s: 4, q: 4, t: 2, a: 7 };
+  var NUMBER = /-?(?:\d*\.\d+|\d+\.?)(?:e[-+]?\d+)?/gi;
+
+  function pathNodes(d) {
+    var count = 0, match, re = /([MLHVCSQTAZmlhvcsqtaz])([^MLHVCSQTAZmlhvcsqtaz]*)/g;
+    while ((match = re.exec(d))) {
+      var cmd = match[1].toLowerCase();
+      if (cmd === "z") continue;
+      var nums = (match[2].match(NUMBER) || []).length;
+      count += Math.max(1, Math.floor(nums / ARITY[cmd]));
+    }
+    return count;
+  }
+
+  function nodeCount(svg) {
+    var total = 0;
+    svg.querySelectorAll("*").forEach(function (el) {
+      switch (el.localName) {
+        case "path": total += pathNodes(el.getAttribute("d") || ""); break;
+        case "rect": case "circle": case "ellipse": total += 4; break;
+        case "line": total += 2; break;
+        case "polygon": case "polyline":
+          total += Math.floor(((el.getAttribute("points") || "").match(NUMBER) || []).length / 2);
+          break;
+      }
+    });
+    return total;
+  }
+
+  // Subpaths of one <path> that partly overlap cancel out when they wind in opposite directions
+  // (nonzero) or always (evenodd), leaving accidental holes. Counters, which sit wholly inside
+  // another subpath, are intended and skipped.
+  var scratch = null;
+  function probe(d, rule) {
+    if (!scratch) {
+      scratch = document.createElementNS(SVG_NS, "svg");
+      scratch.setAttribute("aria-hidden", "true");
+      scratch.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+      document.body.appendChild(scratch);
+    }
+    var el = document.createElementNS(SVG_NS, "path");
+    el.setAttribute("d", d);
+    el.setAttribute("fill-rule", rule);
+    scratch.appendChild(el);
+    return el;
+  }
+  function inside(a, b) {
+    return a.x >= b.x && a.y >= b.y && a.x + a.width <= b.x + b.width && a.y + a.height <= b.y + b.height;
+  }
+  function accidentalHoles(svg) {
+    var found = 0;
+    svg.querySelectorAll("path").forEach(function (path) {
+      var d = path.getAttribute("d") || "";
+      var subs = d.split(/(?=M)/).map(function (x) { return x.trim(); }).filter(Boolean);
+      if (subs.length < 2 || /[a-z]/.test(d.replace(/[^Mm]/g, "")) || !probe("M0 0", "nonzero").isPointInFill)
+        return;
+      var rule = path.getAttribute("fill-rule") || "nonzero";
+      var whole = probe(d, rule);
+      var parts = subs.map(function (sub) { var el = probe(sub, rule); return { el: el, box: el.getBBox() }; });
+      for (var i = 0; i < parts.length; i++) {
+        for (var j = i + 1; j < parts.length; j++) {
+          var a = parts[i].box, b = parts[j].box;
+          if (inside(a, b) || inside(b, a)) continue;
+          var x0 = Math.max(a.x, b.x), y0 = Math.max(a.y, b.y);
+          var x1 = Math.min(a.x + a.width, b.x + b.width), y1 = Math.min(a.y + a.height, b.y + b.height);
+          if (x1 <= x0 || y1 <= y0) continue;
+          for (var k = 0; k < 400; k++) {
+            var pt = new DOMPoint(x0 + (x1 - x0) * ((k % 20) + 0.5) / 20, y0 + (y1 - y0) * (Math.floor(k / 20) + 0.5) / 20);
+            if (parts[i].el.isPointInFill(pt) && parts[j].el.isPointInFill(pt) && !whole.isPointInFill(pt)) {
+              found++;
+              k = 400;
+            }
+          }
+        }
+      }
+    });
+    if (scratch) scratch.textContent = "";
+    return found;
+  }
+
+  function lint(name, entry, isMark) {
+    var out = [];
+    function add(status, text) { out.push({ status: status, item: name, text: text }); }
+    var svg = entry.svg, markup = entry.markup;
+    var all = Array.prototype.slice.call(svg.querySelectorAll("*"));
+    function has(names) {
+      return all.filter(function (el) { return names.indexOf(el.localName.toLowerCase()) >= 0; });
+    }
+
+    var vb = viewBox(svg);
+    if (!vb) add("fail", "No usable viewBox on the root <svg>.");
+    else {
+      if (!vb.every(Number.isInteger)) add("warn", "viewBox has non-integer values: " + vb.join(" "));
+      if (isMark && vb[2] !== vb[3]) add("warn", "The master mark's viewBox isn't square (" + vb[2] + "×" + vb[3] + ").");
+      if (vb[0] !== 0 || vb[1] !== 0) add("warn", "viewBox doesn't start at 0 0.");
+    }
+    if (svg.hasAttribute("width") || svg.hasAttribute("height"))
+      add("warn", "Root has width/height; leave sizing to the embedding context.");
+
+    var text = has(["text", "tspan", "textpath"]);
+    if (text.length) add("fail", "Live <text> (" + text.length + "). Outline the letters into paths.");
+    var fx = has(["filter", "fegaussianblur", "fedropshadow", "feoffset", "feturbulence"]);
+    if (fx.length) add("fail", "Filter effects (" + fx.length + "). Keep the master flat.");
+    var masks = has(["mask", "clippath"]);
+    if (masks.length) add("fail", "<mask>/<clipPath> (" + masks.length + "). Flatten the geometry instead.");
+    var external = has(["image", "script", "foreignobject", "style"]);
+    if (external.length) add("fail", "<image>/<script>/<foreignObject>/<style> found. The master must be self-contained paths.");
+    var grads = has(["lineargradient", "radialgradient"]);
+    if (grads.length) add("warn", "Gradient (" + grads.length + "). Fine as a variant only; keep a flat master.");
+
+    var holes = accidentalHoles(svg);
+    if (holes) add("fail", holes + " pair(s) of overlapping subpaths cancel out, leaving holes. Wind them the same way, or put them in separate <path> elements.");
+
+    var stroked = all.filter(function (el) {
+      var s = el.getAttribute("stroke") || (el.style && el.style.stroke) || "";
+      return (s && s !== "none") || el.hasAttribute("stroke-width");
+    });
+    if (stroked.length) add("warn", "Strokes on " + stroked.length + " element(s). Expand them into filled outlines for the master.");
+
+    var fills = {};
+    all.forEach(function (el) {
+      var f = (el.getAttribute("fill") || (el.style && el.style.fill) || "").toLowerCase();
+      if (f && f !== "none" && f !== "currentcolor" && f.indexOf("url(") !== 0) fills[f] = true;
+    });
+    var colours = Object.keys(fills);
+    if (colours.length > 3) add("warn", colours.length + " fill colours (" + colours.join(", ") + "). More than three needs a reason.");
+
+    var longDecimals = (markup.match(/\d\.\d{3,}/g) || []).length;
+    if (longDecimals) add("warn", longDecimals + " number(s) with 3+ decimals. Round to the grid (integers, at most 2 decimals).");
+
+    var titled = svg.querySelector("title") || svg.getAttribute("aria-label");
+    if (!titled && svg.getAttribute("aria-hidden") !== "true")
+      add("fail", "No <title> or aria-label: screen readers get nothing.");
+    else if (titled && svg.getAttribute("role") !== "img")
+      add("warn", "Add role=\"img\" to the root alongside the title.");
+
+    var nodes = nodeCount(svg);
+    var limit = isMark ? [80, 200] : [400, 800];
+    var nodeStatus = nodes > limit[1] ? "fail" : nodes > limit[0] ? "warn" : "pass";
+    add(nodeStatus, "About " + nodes + " anchor points" + (nodeStatus === "pass" ? "." : ". Simplify: traced or over-detailed art."));
+
+    var bytes = new Blob([markup]).size;
+    add(bytes > 32768 ? "fail" : bytes > 16384 ? "warn" : "pass",
+        (bytes / 1024).toFixed(1) + " KB" + (bytes > 32768 ? ", over the 32 KB BIMI limit." : "."));
+
+    if (!out.some(function (r) { return r.status !== "pass"; }))
+      out.unshift({ status: "pass", item: name, text: "No rule violations found." });
+    return out;
+  }
+
+  function renderLint(rows) {
+    var table = document.getElementById("lint");
+    rows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var s = document.createElement("td");
+      s.className = "s-" + r.status;
+      s.textContent = r.status;
+      var item = document.createElement("td");
+      item.textContent = r.item;
+      var text = document.createElement("td");
+      text.textContent = r.text;
+      tr.appendChild(s);
+      tr.appendChild(item);
+      tr.appendChild(text);
+      table.appendChild(tr);
+    });
+    console.log("[logo-lint] " + JSON.stringify(rows));
+  }
+
+  // ---- Build the sheet -------------------------------------------------------------------
+
+  var mark = fromTemplate("mark");
+  var lockup = fromTemplate("lockup");
+  if (!mark) {
+    document.querySelector("main").appendChild(empty("No <svg> found in <template id=\"mark\">."));
+    return;
+  }
+  var label = (mark.svg.querySelector("title") || {}).textContent || "Brand";
+  var lintRows = lint("mark", mark, true);
+  if (lockup) lintRows = lintRows.concat(lint("lockup", lockup, false));
+  renderLint(lintRows);
+
+  var sizes = document.getElementById("sizes");
+  [16, 24, 32, 48, 64, 128, 256].forEach(function (px) {
+    sizes.appendChild(figure(sized(mark.svg, px), px + " px"));
+  });
+
+  var pixels = document.getElementById("pixels");
+  pixels.appendChild(figure(pixelCanvas(mark.svg, 16, token("--ground"), token("--ink"), false), "16 px, ×8"));
+  pixels.appendChild(figure(pixelCanvas(mark.svg, 32, token("--ground"), token("--ink"), false), "32 px, ×4"));
+  pixels.appendChild(figure(pixelCanvas(mark.svg, 16, token("--ink"), token("--ground"), true), "16 px reversed, ×8"));
+
+  var colourways = document.getElementById("colourways");
+  colourways.appendChild(figure(sized(mark.svg, 96), "full colour"));
+  colourways.appendChild(figure(sized(mark.svg, 96, { oneColour: true }), "one colour"));
+  colourways.appendChild(figure(sized(mark.svg, 96, { oneColour: true }), "reversed", "on-ink"));
+  colourways.appendChild(figure(sized(mark.svg, 96, { oneColour: true }), "on brand", "on-brand"));
+
+  var stress = document.getElementById("stress");
+  stress.appendChild(figure(sized(mark.svg, 96, { transform: "scaleX(-1)" }), "mirrored"));
+  stress.appendChild(figure(sized(mark.svg, 96, { transform: "rotate(180deg)" }), "rotated 180°"));
+  stress.appendChild(figure(sized(mark.svg, 96, { filter: "blur(4px)" }), "squint"));
+
+  document.getElementById("grid").appendChild(gridOverlay(mark.svg, 256));
+
+  var lockups = document.getElementById("lockups");
+  if (lockup) {
+    [32, 64, 128].forEach(function (px) { lockups.appendChild(figure(sized(lockup.svg, px), px + " px high")); });
+    lockups.appendChild(figure(sized(lockup.svg, 64, { oneColour: true }), "reversed", "on-ink"));
+  } else {
+    lockups.appendChild(empty("No lockup supplied."));
+  }
+
+  var context = document.getElementById("context");
+  var nav = document.createElement("div");
+  nav.className = "nav";
+  nav.appendChild(lockup ? sized(lockup.svg, 28) : sized(mark.svg, 28));
+  nav.appendChild(Object.assign(document.createElement("span"), { className: "spacer" }));
+  for (var i = 0; i < 3; i++) nav.appendChild(Object.assign(document.createElement("span"), { className: "bar" }));
+  var navFig = document.createElement("figure");
+  navFig.appendChild(nav);
+  navFig.appendChild(Object.assign(document.createElement("figcaption"), {
+    textContent: lockup ? "lockup, 28 px high" : "mark, 28 px high (no lockup supplied)"
+  }));
+  context.appendChild(navFig);
+  var tabsFig = document.createElement("figure");
+  tabsFig.appendChild(tabStrip(mark.svg, false, label));
+  tabsFig.appendChild(tabStrip(mark.svg, true, label));
+  tabsFig.appendChild(Object.assign(document.createElement("figcaption"), { textContent: "favicon, 16 px" }));
+  context.appendChild(tabsFig);
+})();
+</script>
+</body>
+</html>
