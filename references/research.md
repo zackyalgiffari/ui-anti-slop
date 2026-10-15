@@ -1,6 +1,6 @@
 # Research: what makes a UI read as AI-generated
 
-Compiled 2026-10-14 in three passes.
+Compiled 2026-10-14 in three passes, with a fourth on 2026-10-15.
 
 - **First pass:** a browse of Figma Community (the landing-page, SaaS and Figma Make galleries)
   plus published critiques of AI-generated UI.
@@ -13,6 +13,10 @@ Compiled 2026-10-14 in three passes.
 - **Third pass, the same day:** a visual check in a regular Chrome session, where Figma Community
   pages and thumbnails load normally. It also reopened the sources that had returned 403 to the
   headless browser. Findings from this pass are marked *(visual check)*.
+- **Fourth pass, 2026-10-15:** comfort. Designs made with the skill felt forced and tiring, so
+  this pass read github.com/miqdadbadjuber/anti-slop and nine other open-source design skills for
+  AI agents, audited the skill's own instructions, and collected evidence on readability,
+  contrast, saturation and dark mode. See [Comfort](#comfort).
 
 Every source under Sources was opened, not just seen in search results. Claims that could not be
 checked are marked **unverified**.
@@ -147,6 +151,8 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
 - **Palette.**
   - Use 4–6 named hex tokens with roles, chosen from the brief's own world.
   - Use dominant colours with sharp accents rather than "timid, evenly-distributed palettes".
+    The fourth pass narrows this: the dominant colour owns the area as a low-chroma tint, and the
+    sharp accent stays within its budget ([Comfort](#comfort)).
   - Treat accent colour as a budget for the whole page.
   - A worked example: petrol teal `#146B68`, bronze `#97652B` and sage `#556A38` on `#FDFCF9`
     (codemyspec).
@@ -159,7 +165,8 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
     wave](#the-second-wave).
 - **Layout.**
   - Open with the most characteristic thing of the subject.
-  - Use left-aligned or uneven splits (7+5, 8+4) and real product screenshots.
+  - Use left-aligned or uneven splits (7+5, 8+4) where the content is unequal, and real product
+    screenshots.
   - Vary radius by role: inputs 4–6px, cards 8–16px.
 - **Motion.** One orchestrated moment, or motion that answers a user action.
 - **Restraint.** Remove one element that doesn't serve the brief before shipping.
@@ -178,7 +185,8 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
 - **Personality sliders** (GV Brand Sprint):
   - elite ↔ mass appeal, serious ↔ playful, conventional ↔ rebel, friend ↔ authority, classic ↔
     young;
-  - "true brand personality often lies at the ends of these spectrums".
+  - "true brand personality often lies at the ends of these spectrums". The skill applies the
+    ends to the voice and the signature, not to the reading surfaces ([Comfort](#comfort)).
 - **"X but not Y"** (Mailchimp voice guide): "weird but not inappropriate", "smart but not
   snobbish".
 - **Hike One design direction:** up to three named themes, each described in words, then a
@@ -441,7 +449,9 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
 ## Layout systems
 
 - **Content-out** (Mark Boulton via hidde.blog): "design content out, not canvas in". Find the
-  fixed sizes in the content, derive a unit from them, and prefer odd column counts.
+  fixed sizes in the content, derive a unit from them, and prefer odd column counts. The fourth
+  pass keeps the content-out method but drops odd counts as a default; a regular grid is calmer
+  ([Comfort](#comfort)).
 - **Grids:**
   - IBM Carbon 2x Grid: an 8px mini unit; 4, 8 or 16 columns; gutterless for related content;
     the aspect ratios 1:1, 2:1, 2:3, 3:2, 4:3, 16:9. Add columns for more items; keep the columns
@@ -459,7 +469,8 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
   - Material density works in 4px steps and suits lists and tables, not alerts or task flows.
   - shadcn now ships compact and generous styles.
 - **Unsourced observation:** a centred 12-column container with identical section padding
-  everywhere.
+  everywhere, used without looking at the content. Uniform rhythm chosen on purpose is a different
+  thing: the fourth pass makes it the Calm default ([Comfort](#comfort)).
 
 ## Surfaces
 
@@ -491,6 +502,125 @@ The rule therefore bans these as fallbacks, not just the first-wave purple and n
   - WCAG 2.4.13 (AAA): a perimeter of at least 2 CSS px, with 3:1 contrast between focused and
     unfocused.
   - Primer: an inset 2px outline. Atlassian: 2px, offset 2px, radius + 2px.
+
+## Comfort
+
+### Why the skill's output felt forced
+
+An audit of the skill's own files (fourth pass) found it told the model to be distinctive on
+every axis at once, with no positive floor:
+- personality sliders "near the ends… a slider left in the middle is a decision not made", with
+  nothing saying what a slider may change;
+- "asymmetric splits by default" and "odd column counts create tension", with no limit on
+  alignment edges;
+- "skip the Google Fonts top 100" for every role, body text included;
+- colours sampled from materials with no lightness or chroma limit by role, and "one colour owns
+  most of the area";
+- no body size anywhere, body line height 1.3–1.5, no cap on sizes or weights per screen;
+- the worked example's ground `#EFE8D8` (OKLCH 0.932 / 0.023 / 87°) was itself beige, darker and
+  more saturated than the banned second-wave cream `#F4F1EA` (0.959 / 0.010 / 87°);
+- every self-check asked "is this different?" and none asked "is this comfortable?".
+
+### miqdadbadjuber/anti-slop
+
+MIT, about 6,100 stars. Rules that filter generic AI output in UI, copy and code, split into a
+core skill plus `antislop-ui`, `antislop-human`, `antislop-layoutmobile`, `antislop-copywriting`
+and `antislop-code`.
+- **A filter, not a style guide:** "no prescribed colors, fonts, layouts"; it "rejects technique
+  without purpose". Rules come in three tiers: hard gates (honesty, function, accessibility),
+  purpose gates (allowed with a written reason and within dose caps) and quality locks. R-31: a
+  one-line reason for every colour, layout, type, spacing, card and icon choice.
+- **Intensity dials:** energy, rhythm and motion, each 1 (Calm), 2 (Balanced) or 3 (Bold). A
+  public-service site is E1/R1/M1, a designer portfolio E3/R3/M2. With no direction it uses
+  E1/R1/M1 and labels the result "draft without direction". "If RHYTHM is 1 (uniform), uniformity
+  is a deliberate choice."
+- **Dose caps:** "2-3 core colors + 1 accent" with one core as the neutral base ("Restraint is
+  what makes the accent land"); glass and glow on 1–2 elements; "Most elements should sit flat".
+- **Both failures:** the slop catalogue, and a "Sterile Default" (flat near-white, thin grey
+  borders, a generic font) whose fix is to raise the dials.
+- **Bans the skill lacked:** a bento grid as the default section layout, a fake terminal window,
+  an eyebrow pill that repeats the H1, "How it works" always in three steps, always three pricing
+  tiers, the four-column footer, alternating backgrounds as the only variation, skeletons as the
+  product shot, trend-stacking, dark mode by default, charts without a question, generic table
+  columns, filler data, empty states with no cause or next step.
+- **Mobile:** three responsive states with a designed 600–1024px band, breakpoints where content
+  breaks, `dvh` instead of `100vh`, mobile padding about half of desktop, a compact sticky nav, a
+  labelled menu, safe-area insets, the keyboard never covering the focused input, 44×44 targets
+  with gaps.
+- **Contrast tooling:** a WCAG 2 CLI and a one-tool MCP server. The MCP rounds the ratio to two
+  decimals before comparing, so 4.495–4.499 passes there and fails in the CLI; the skill's own
+  checker compares unrounded values.
+- **Where it differs from this skill:** it allows Inter and Geist with a reason, has no navy ban,
+  names Linear and GOV.UK as calm anchors, and defaults to a light/dark toggle. Its "large text =
+  18px+" is wrong; WCAG's large text is 24px, or 18.66px bold.
+- **Direction lives in the project's `DESIGN.md`;** agent-written direction is distrusted as
+  "default AI taste".
+- *(visual check)* Its README's before/after images: without it, a centred hero with a sparkle
+  logo and a beta pill; with the core skill only, a plain dark layout with one accent ("Plain,
+  because beauty is not its job"); with every skill, one full-bleed illustration behind a calm
+  sans headline and a single install command. The footer reads "A beautiful UI is DESIGN.md's job,
+  and yours."
+
+### Other design skills for agents
+
+Read through the GitHub API on 2026-10-15.
+
+| Repo | What the skill takes | House look not to copy |
+|---|---|---|
+| pbakaus/impeccable (Apache-2.0) | `quieter`: saturation to 70–85 %, a 10 % accent rule, tinted greys, 900→600 and 700→500; `operate`: product UI on a 1.125–1.2 scale, fixed rem sizes; one elevation language, no "ghost card"; `craft-floor`: selection, caret, focus, `color-scheme`, `tabular-nums` | `new-work` pushes bolder "commit" choices |
+| Nutlope/hallmark (MIT) | the most numeric OKLCH: paper L 96–98 % C 0.005–0.015, dark L 12–16 %, ink L 16–22 % / 92–96 %, accent C 0.12–0.22 on ≤ 3 % of a view, dark accents −0.02–0.04 C and +5–10 % L, about +3 % L per elevation step | Geist body + Fraunces wordmark + Geist Mono, oat paper, signal orange `#FC4C02`, 1.2fr/1fr/0.8fr grids |
+| Leonxlnx/taste-skill (MIT) | ground 70–90 % of the page, accent under 5 %, surface 2–6 L points from the ground; "warmth is not beige"; body 17–19px, line height 1.45–1.6, 62ch; exits about 70 % of entrances | borderless tone-step panels, radius 0, vw-sized display type; `soft-skill` and `minimalist-skill` reproduce the Linear and Notion looks |
+| emilkowalski/skills (MIT) | UI motion under 300ms, strong ease-out, no animation on actions used 100+ times a day, reduced motion as "fewer and gentler" | none; mostly mechanics |
+| anthropics/skills frontend-design (Apache-2.0) | "spend your boldness in one place… keep everything around it quiet"; one orchestrated moment | none |
+| vercel-labs/web-interface-guidelines (MIT) | hit targets ≥ 24px (44px on mobile), mobile inputs ≥ 16px, `tabular-nums`, `text-wrap: balance`, curly quotes, non-breaking spaces, borders and shadows tinted to the background hue; prefers APCA | none |
+| ibelick/ui-skills (MIT) | one accent per view, no gradients, feedback motion ≤ 200ms | "use Tailwind CSS defaults" and the default shadow scale |
+| s0xDk/refactoring-ui-skill (MIT) | "start with too much white space", grayscale first, more space around a group than within it, at most three text colours, nothing below 400 weight | a black five-step shadow scale |
+| raphaelsalaja/userinterface-wiki (MIT) | concentric radii, one light direction, no pure-black shadows, press and hover 120–180ms | none |
+
+Where they disagree (card radius 12–16px vs 0 or round; a whisper shadow vs no lines at all;
+`#fff` allowed vs banned; WCAG 2 vs APCA), the skill takes the calmer, better-evidenced side and
+leaves the rest to the Direction.
+
+### Evidence
+
+- **Contrast:**
+  - Apple: "no lower than 4.5:1… strive for a contrast ratio of 7:1, especially in small text".
+  - APCA: Lc 75 is "the minimum level for columns of body text", Lc 90 "preferred… for body
+    text", Lc 60 for other readable text, Lc 45 for large headlines, Lc 15 for dividers; Lc 90 is a
+    suggested maximum for large text and large areas of colour. APCA is not yet an official
+    standard.
+  - Radix's 12-step scales keep the highest chroma (step 9) for solid fills; steps 1–2 are
+    backgrounds and steps 11–12 text.
+  - Primer sets text `#1f2328` on `#ffffff`; Refactoring UI: "true black tends to look pretty
+    unnatural".
+  - NN/g: low-contrast grey text strains the eyes and lowers trust; reduce density instead of
+    dimming text.
+- **Light vs dark:** NN/g: "in users with normal vision, light mode leads to better performance
+  most of the time"; it advises against dark by default but recommends offering it.
+- **Dark themes:** Material uses `#121212`, text at 87/60/38 % opacity, warns that pure white text
+  "can harm legibility" and that saturated colours "vibrate" against dark grounds; lighter
+  overlays mark elevation. Wear OS: saturated colours "produce optical vibrations… which can
+  cause eye strain". Apple: dark-mode colours "aren't necessarily inversions".
+- **Saturation:** Apple reserves colour "for elements that truly benefit from emphasis";
+  Refactoring UI: "almost everything in an interface is grey". **Unverified** (summaries only): red
+  and blue together are hard on the eyes (Weinschenk); chromostereopsis (Thompson, May & Stone
+  1993); halation of light text on black for people with astigmatism (Level Access). UX Movement's
+  case against bright backgrounds rests on attention studies, not eye strain.
+- **Type:**
+  - WCAG 1.4.8 (AAA): ≤ 80 characters, not justified, line spacing ≥ 1.5, paragraph spacing
+    ≥ 1.5× line spacing. WCAG 1.4.12 (AA): the layout survives line height 1.5, paragraph spacing
+    2×, letter spacing 0.12 and word spacing 0.16.
+  - GOV.UK sets body text at 19px on every screen with a seven-step scale.
+  - The British Dyslexia Association: 16–19px, line spacing 1.5, bold rather than italics or
+    underline, no all caps for running text, left-aligned, 60–70 characters, dark text on a light
+    but not white ground, no background patterns behind text.
+  - **Unverified:** Butterick's 15–25px web body and 45–90 characters (seen via search); Dyson
+    (2004) on reading speed at long lines vs preferred 45–72 characters (abstract only).
+- **Hierarchy:** NN/g: "no more than 3 different sizes"; proximity is the key Gestalt principle;
+  "symmetry is quiet… asymmetry is dynamic". The 60-30-10 rule comes from interior design and has
+  no UI research behind it.
+- **The OKLCH bands are heuristics.** No source states them directly; they are triangulated from
+  Hallmark, Material's `#121212` and 200–50 tones, Radix's step roles and Primer.
 
 ## Sources
 
@@ -585,3 +715,39 @@ Second and third passes:
   - https://www.joshwcomeau.com/css/designing-shadows
   - https://cdn.jsdelivr.net/npm/@shopify/polaris-tokens/dist/css/styles.css
   - https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html
+
+Fourth pass:
+
+- Skills and guidelines for agents:
+  - https://github.com/miqdadbadjuber/anti-slop
+  - https://github.com/pbakaus/impeccable
+  - https://github.com/Nutlope/hallmark
+  - https://github.com/Leonxlnx/taste-skill
+  - https://github.com/emilkowalski/skills
+  - https://github.com/vercel-labs/web-interface-guidelines
+  - https://github.com/ibelick/ui-skills
+  - https://github.com/s0xDk/refactoring-ui-skill
+  - https://github.com/raphaelsalaja/userinterface-wiki
+- Contrast and colour:
+  - https://developer.apple.com/design/human-interface-guidelines/dark-mode
+  - https://developer.apple.com/design/human-interface-guidelines/color
+  - https://git.apcacontrast.com/documentation/APCA_in_a_Nutshell.html
+  - https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
+  - https://primer.style/foundations/primitives/color
+  - https://www.refactoringui.com/previews/building-your-color-palette
+  - https://www.nngroup.com/articles/dark-mode/
+  - https://www.nngroup.com/articles/low-contrast/
+  - https://codelabs.developers.google.com/codelabs/design-material-darktheme
+  - https://developer.android.com/design/ui/wear/guides/m2-5/styles/color
+  - https://uxmovement.com/content/why-you-should-avoid-bright-saturated-background-colors/
+  - https://www-users.york.ac.uk/~pt2/ThompsonMayStone1993.pdf (summary only)
+  - https://www.levelaccess.com/blog/accessibility-for-people-with-astigmatism/ (summary only)
+- Type and hierarchy:
+  - https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html
+  - https://design-system.service.gov.uk/styles/type-scale/
+  - https://www.bumc.bu.edu/jmedday/files/2025/05/Dyslexia-friendly-style-guide.docx (the BDA
+    guide as reproduced by Boston University; the BDA's own PDF returned 403)
+  - https://practicaltypography.com/typography-in-ten-minutes.html (via search)
+  - https://journals.uc.edu/index.php/vl/article/view/5765 (abstract only)
+  - https://www.nngroup.com/articles/principles-visual-design/
+  - https://paigebrunton.com/blog/60-30-10-color-rule-for-web-designers/
