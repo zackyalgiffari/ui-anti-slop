@@ -6,6 +6,21 @@ so does a project's established design system: if either asks for something list
 These rules govern every axis the brief leaves free. In an existing codebase, don't add these
 defaults to new work; point out the ones already there instead of silently rewriting them.
 
+## Calm first
+Distinctive in one or two places, calm everywhere else. The reading surfaces (ground, body text,
+forms, tables, navigation, controls, spacing, grid) stay calm and familiar. The subject shows at
+full strength only in the signature: the logo plus 1–2 of a display face, a bold accent, imagery,
+one layout gesture or one pattern. Intensity is Calm unless the brief or the subject is loud.
+- Light ground OKLCH L 0.96–1.00, C ≤ 0.015 (warm tints under 0.008); anything over a quarter of
+  the viewport C ≤ 0.02; ink L 0.18–0.35, not #000 on #FFF; body text ≥ 7:1, secondary ≥ 4.5:1 by colour, not opacity.
+- 2–3 core colours + 1 accent (≤ 5 % of a view); no two saturated hues vibrating side by side;
+  status colours stay green/amber/red/blue.
+- Body 16–18px, line height 1.5, 55–75ch; at most 4–6 sizes and 3 weights per screen.
+- A regular grid, at most 3–4 alignment edges per view, 4–6 spacing values; logo, navigation,
+  search and actions where users expect them; most elements flat.
+- Comfort wins over novelty. The opposite failure is the sterile default: flat white, thin grey
+  borders, a generic font and nothing of the subject.
+
 ## Never: navy
 Navy and blue-slate are banned as page, surface, sidebar, card, hero or "dark mode" colours.
 - By the numbers: hue ≈ 200–260°, lightness under ~25 %, any visible saturation. Examples:
@@ -15,8 +30,9 @@ Navy and blue-slate are banned as page, surface, sidebar, card, hero or "dark mo
 - The light-mode twin: blue-tinted greys as the page colour (#F8FAFC #F1F5F9 #F5F6FA,
   slate-50/100, gray-50).
 - The combos: navy + gold/amber "premium", navy + electric-blue/cyan glow, navy + indigo gradient.
-A dark theme that is actually wanted gets a dark taken from the subject (forest, oxblood, umber,
-olive, aubergine, graphite with zero blue) and a different one each project.
+Light mode is the default. A dark theme that is actually wanted gets a near-neutral dark tinted
+from the subject (forest, oxblood, umber, olive, aubergine, graphite with zero blue; OKLCH L
+0.15–0.24, C ≤ 0.02), text at L 0.88–0.94, and a different one each project.
 
 ## Other colour defaults to avoid
 - Indigo/violet primaries (#6366F1 #4F46E5 #7C3AED #8B5CF6 #5E6AD2), purple→blue or violet→cyan
@@ -26,9 +42,10 @@ olive, aubergine, graphite with zero blue) and a different one each project.
 - The second wave, which is where models go when told "no purple": cream (#F4F1EA) + high-contrast
   serif + terracotta (#D97757); near-black (#0B0B0B/#111) + one acid-green or vermilion accent.
   Fine when the brief calls for it, never as the fallback.
-Instead: 4–6 named hex tokens taken from the subject's world (its materials, photography, industry,
-place). One dominant colour and one accent with a budget; neutrals tinted toward the brand hue,
-not toward blue; WCAG AA contrast for text.
+Instead: 4–6 named hex tokens (plus status colours) whose hues come from the subject's world (its materials,
+photography, industry, place) and whose lightness and chroma come from their role. The dominant
+colour as a low-chroma tint, one accent with a budget; neutrals tinted toward the brand hue, not
+toward blue.
 
 ## Typography
 - Don't default to Inter, Geist, Roboto, Arial, Open Sans, Lato, Poppins, Montserrat or the
@@ -41,17 +58,21 @@ not toward blue; WCAG AA contrast for text.
   tracked ALL-CAPS eyebrow above every heading; tracking-tight bold on every heading; Title Case
   Everywhere; a giant centred hero headline by default; serif display + grotesk body + mono labels;
   mono on text that isn't code; variable axes maxed out for effect.
-Instead: one family or two clearly distinct ones chosen for this subject, a real type scale,
-deliberate weights and widths, lines under ~80 characters.
+Instead: a text face chosen for legibility (a popular, proven one is fine, except the names above;
+system-ui is fine for app UI chosen on purpose) and, if needed, one display face that carries the
+subject's character; a real type scale, deliberate weights, lines under ~80 characters. Never an
+era or display face as body text.
 
 ## Layout, components, effects
 - The stock landing page: centred hero, "✨ New" pill, two buttons, logo row, three identical
   feature cards with an icon in a circle, testimonial grid, pricing with "Most popular", CTA band.
 - The SaaS card kit: everything boxed in identical rounded-2xl cards with one radius, shadow-lg
   everywhere, nested cards, cards with a coloured left border.
+- Section kits by habit: a bento grid, a fake terminal window, a pill above the headline that
+  repeats it, three steps and three pricing tiers whatever the content.
 - The stock dashboard: navy sidebar, four KPI cards with icon chips and "+12.5% ↑" badges.
 - Glassmorphism, blurred gradient orbs or aurora blobs, grid/dot backgrounds, glow shadows,
-  sparkle emoji, emoji as icons.
+  sparkle emoji, emoji as icons; several of these stacked on one page.
 - Template chrome: 01/02/03 markers on things that aren't a sequence, "A · B · C" meta strings,
   "→" on every link, monospace micro-labels.
 - Surfaces: pure-black or grey shadows on a coloured ground, the same radius on a parent and its
@@ -59,8 +80,9 @@ deliberate weights and widths, lines under ~80 characters.
 - Motion: fade-and-slide-up on every section, hover:scale on every card, pulsing dots,
   transition-all.
 Instead: open with the most characteristic thing of the subject (its photo, its product, a live
-demo, its real data). Asymmetric or left-aligned grids; radius and shadow that vary by role; one
-memorable element and everything else quiet.
+demo, its real data). A regular grid aligned to few edges (asymmetry only where the content is
+unequal, never for "tension"), familiar placements, radius and shadow that vary by role; one
+signature element and everything else quiet.
 
 ## Logos and assets
 - Logos are hand-written SVG paths drawn from a one-sentence concept in the subject, and work in
@@ -82,11 +104,13 @@ of X", "feels like magic", invented round stats (10,000+, 99.9 %), John Doe/Acme
 "Revolusi …", "Wujudkan …". Use real content; a button says what happens.
 
 ## Process
-1. Before writing UI code, state the Direction (subject, three "X, not Y" adjectives, material
-   nouns), palette (named hex tokens), type, logo concept, assets, layout and surfaces, each with
-   the reason it fits this subject, and check none of it is on this page. Load the `ui-anti-slop`
-   skill for the full process, and `frontend-design`.
+1. Before writing UI code, read the project's DESIGN.md if there is one. Then state the Direction
+   (subject, three "X, not Y" adjectives, material nouns), intensity and signature, palette (named
+   hex tokens), type, logo concept, assets, layout and surfaces, each with the reason it fits this
+   subject, and check none of it is on this page. Load the `ui-anti-slop` skill for the full
+   process, and `frontend-design`.
 2. After building, screenshot it and ask: would this look the same for a different product? If
-   yes, change it.
+   yes, change the signature. Then check comfort: blur it (exactly one thing should pop), read a
+   paragraph for two minutes, and run the skill's palette check. Comfort wins.
 3. A "UI slop check" note from the PostToolUse hook means fix it, or say why the brief or the
    project's design system requires it.

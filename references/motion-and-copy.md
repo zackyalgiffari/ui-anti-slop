@@ -15,7 +15,8 @@ adjectives and the voice), the layout and the real content, and finishes the des
    - feedback: press, saved, error;
    - spatial continuity: where something came from, where it went;
    - one signature moment, if the Direction asks for one.
-3. **Set durations and easing by role:**
+3. **Set durations and easing by role.** The intensity sets how much moves
+   ([comfort.md → Intensity](comfort.md#intensity)): at Calm, only feedback and state changes.
 
    | Role | Duration | Easing |
    |---|---|---|
@@ -25,10 +26,14 @@ adjectives and the voice), the layout and the real content, and finishes the des
 
    Name the curves as tokens. The adjectives can tune them: "precise, not clinical" wants short,
    firm curves; "playful, not childish" can take a small overshoot on one element.
+   - Exits run about 75 % of the entrance time.
+   - Things travel 8–16px, not 40px. No bounce on UI.
+   - Actions people repeat all day (typing, toggles, list navigation, menus opened by keyboard)
+     don't animate at all.
 4. **Animate `transform` and `opacity`, not layout properties.** List the properties being
    transitioned; never use `transition: all`.
-5. **Respect `prefers-reduced-motion: reduce`.** Replace movement with an instant change or a
-   short fade, and stop autoplaying loops.
+5. **Respect `prefers-reduced-motion: reduce`.** Fewer and gentler, not zero: replace movement
+   with an instant change or a short fade, and stop autoplaying loops.
 6. **Nothing that loops forever for decoration:** no pulsing dots, floating blobs or shimmer on
    static content.
 

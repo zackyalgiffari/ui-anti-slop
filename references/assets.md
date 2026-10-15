@@ -57,9 +57,14 @@ library of generic ones.
      eyetracking shows people ignore generic stock people and decorative "feel-good" images, but
      look at real staff photos.
    - Prefer no image to a decorative one.
+   - One strong, real image is often the best signature: it carries the subject so the type,
+     colour and layout around it can stay calm. Text over a photo is checked at its worst spot,
+     with a scrim if needed.
 5. **Patterns and textures: from the material nouns.** Woven, printed, stamped, engraved, tiled,
    painted. Draw them as an SVG `<pattern>` or a small tiled SVG, with tokens for colours. Use one
-   pattern, at low contrast behind content or at full strength in one place, not everywhere.
+   pattern, at full strength in one place (it then counts as a signature item), or faintly (about
+   APCA Lc 15 or less against the ground) behind content that isn't body text. Never behind
+   paragraphs, forms or tables, and not everywhere.
 6. **Generated assets:**
    - the favicon and app-icon set (see [logo-svg.md](logo-svg.md#favicon-and-app-icon-set));
    - a social preview image (1200×630) built from the real headline, the logo and one brand
